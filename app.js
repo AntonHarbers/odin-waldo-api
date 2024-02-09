@@ -1,24 +1,59 @@
 var createError = require('http-errors');
 var express = require('express');
-var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var indexRouter = require('./routes/index');
+var indexRouter = require('./routes/index_router');
+var gameRouter = require('./routes/games_router');
+var characterRouter = require('./routes/characters_router');
+const RateLimit = require('express-rate-limit');
+const { default: mongoose, mongo } = require('mongoose');
+const compression = require('compression');
+var cors = require('cors');
+var helmet = require('helmet');
+
 require('dotenv').config();
 
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+const limiter = RateLimit({
+  windowsMs: 1 * 60 * 1000, // 1 min
+  max: 100,
+});
 
-app.use(logger('dev'));
+// MongoDb setup
+mongoose.set('strictQuery', false);
+const mongoDB = process.env.MONGO_URL_DEV;
+
+connectMongo().catch((e) => console.error(e));
+async function connectMongo() {
+  await mongoose.connect(mongoDB);
+}
+
+// Middleware chain
+app.set('trust proxy', 1);
+if (process.env.NODE_ENV !== 'production') {
+  app.use(logger('dev'));
+} else {
+  app.use(logger('combined'));
+}
+app.use(limiter);
+app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      'script-src': ["'self"],
+    },
+  })
+);
+app.use(compression());
 
+// Hooking up the Routes:
 app.use('/', indexRouter);
+app.use('/games', gameRouter);
+app.use('/characters', characterRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
