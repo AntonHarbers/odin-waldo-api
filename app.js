@@ -39,7 +39,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(limiter);
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(
   helmet.contentSecurityPolicy({
@@ -68,7 +68,7 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.json(err);
 });
 
 module.exports = app;
