@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 const { DateTime } = require('luxon');
 
 const GameSchema = new Schema({
-  start_time: { type: Date, default: Date.now(), required: true },
-  finish_time: { type: Date, default: 0, required: true },
+  start_time: { type: Number, default: parseInt(Date.now()), required: true },
+  finish_time: { type: Number, default: 0, required: true },
   level: { type: Number, required: true },
   player_name: { type: String, default: 'Unknown', required: true },
 });
@@ -19,8 +19,8 @@ GameSchema.virtual('finish_time_formatted').get(function () {
   );
 });
 
-GameSchema.virtual('Score').get(function () {
-  return parseInt(this.finish_time - this.start_time).toFixed(0);
+GameSchema.virtual('score').get(function () {
+  return this.finish_time - this.start_time;
 });
 
 module.exports = mongoose.model('Game', GameSchema);
