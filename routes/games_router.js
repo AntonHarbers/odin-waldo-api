@@ -7,6 +7,6 @@ router.get('/', games_controller.get_games);
 router.post('/', games_controller.post_game);
 router.patch('/:id/time', games_controller.patch_game_time);
 router.patch('/:id/name', games_controller.patch_game_name);
-router.put('/:id', games_controller.update_game);
+router.get('/:level', games_controller.get_games_level);
 
 module.exports = router;

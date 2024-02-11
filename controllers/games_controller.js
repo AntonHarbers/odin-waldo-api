@@ -5,6 +5,14 @@ const Game = require('../models/game_model');
 exports.get_games = (req, res, next) => {
   res.json('Games');
 };
+exports.get_games_level = asyncHandler(async (req, res, next) => {
+  const level = req.params.level;
+
+  const games = await Game.find({ level: level }).sort({ score: 1 }).exec();
+
+  const completedGames = games.filter((game) => game.finish_time != 0);
+  res.json(completedGames);
+});
 
 exports.post_game = [
   body('level', 'level must not be empty').trim().isLength({ min: 1 }).escape(),
@@ -63,6 +71,7 @@ exports.patch_game_time = [
 exports.patch_game_name = [
   body('name', 'name should not be empty').trim().isLength({ min: 1 }).escape(),
   asyncHandler(async (req, res, next) => {
+    console.log('ye');
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.json(errors.array());
 
@@ -79,11 +88,5 @@ exports.patch_game_name = [
     } else {
       return res.json(`game with id: ${req.params.id} not found`);
     }
-  }),
-];
-
-exports.update_game = [
-  asyncHandler(async (req, res, next) => {
-    res.json('name set');
   }),
 ];

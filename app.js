@@ -37,7 +37,13 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(logger('combined'));
 }
 app.use(limiter);
-app.use(cors());
+
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  optionsSuccessStatus: 200, // For legacy browser support
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
