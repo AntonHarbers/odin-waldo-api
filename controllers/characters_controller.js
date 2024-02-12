@@ -11,7 +11,6 @@ exports.get_characters = asyncHandler(async (req, res, next) => {
 exports.get_char_coords = asyncHandler(async (req, res, next) => {
   const character = await Character.findById(req.params.id);
 
-  console.log(req.body);
   let correct = false;
   if (
     character.x <= req.body.x + 2 &&

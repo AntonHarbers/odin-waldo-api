@@ -9,16 +9,6 @@ const GameSchema = new Schema({
   player_name: { type: String, default: 'Unknown', required: true },
 });
 
-GameSchema.virtual('start_time_formatted').get(function () {
-  return DateTime.fromJSDate(this.start_time).toLocaleString(DateTime.DATE_MED);
-});
-
-GameSchema.virtual('finish_time_formatted').get(function () {
-  return DateTime.fromJSDate(this.finish_time).toLocaleString(
-    DateTime.DATE_MED
-  );
-});
-
 GameSchema.virtual('score').get(function () {
   return this.finish_time - this.start_time;
 });

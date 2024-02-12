@@ -16,8 +16,8 @@ require('dotenv').config();
 var app = express();
 
 const limiter = RateLimit({
-  windowsMs: 1 * 60 * 1000, // 1 min
-  max: 100,
+  windowsMs: 1 * 60 * 60 * 1000, // 1 hour
+  max: 300,
 });
 
 // MongoDb setup
@@ -39,7 +39,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(limiter);
 
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: process.env.CORS_URL,
   optionsSuccessStatus: 200, // For legacy browser support
 };
 
